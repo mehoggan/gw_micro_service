@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 3.0.2)
+project(gw_micro_service)
+
+option(BUILD_SHARED_LIBS "Build shared libraries over static library." ON)
+option(DAGTASKS_TESTS "Build unit tests." ON)
+option(DAGTASKS_BINDINGS "Build all bindings for the native library." ON)
+
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(CMAKE_MACOSX_RPATH 1)
+endif()
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/c++11.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/externals.cmake)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.cppmicroservices.txt.in
+    ${CMAKE_BINARY_DIR}/cppmicroservices-download/CMakeLists.txt)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cppmicroservices.cmake)
+
+# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.libxml2.txt.in
+#   ${CMAKE_BINARY_DIR}/libxml2-download/CMakeLists.txt)
+# include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/libxml2.cmake)
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/lib)
+
+# add_subdirectory(include)
+# include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+# add_subdirectory(lib)
+# add_subdirectory(bin)
+# 
+# if(INCLUDE_PROJECT_TESTS)
+#   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.googletest.txt.in
+#     ${CMAKE_BINARY_DIR}/googletest-download/CMakeLists.txt)
+#   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/googletest.cmake)
+#   add_subdirectory(tests)
+# endif()

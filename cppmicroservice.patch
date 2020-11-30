@@ -1,0 +1,27 @@
+diff --git a/cmake/usMacroCreateBundle.cmake b/cmake/usMacroCreateBundle.cmake
+index bfc26aea..290762f5 100644
+--- a/cmake/usMacroCreateBundle.cmake
++++ b/cmake/usMacroCreateBundle.cmake
+@@ -91,7 +91,7 @@ list(APPEND ${PROJECT_NAME}_SOURCES $<TARGET_OBJECTS:util>)
+ 
+ # Create the bundle library
+ add_library(${PROJECT_TARGET} ${${PROJECT_NAME}_SOURCES}
+-            ${${PROJECT_NAME}_PRIVATE_HEADERS} ${${PROJECT_NAME}_PUBLIC_HEADERS})
++  ${${PROJECT_NAME}_PRIVATE_HEADERS} ${${PROJECT_NAME}_PUBLIC_HEADERS})
+ set_property(TARGET ${PROJECT_TARGET} PROPERTY OUTPUT_NAME ${PROJECT_OUTPUT_NAME})
+ 
+ target_link_libraries(${PROJECT_TARGET} PUBLIC ${US_LIBRARIES})
+diff --git a/framework/CMakeLists.txt b/framework/CMakeLists.txt
+index 3b3a506b..0a11785b 100644
+--- a/framework/CMakeLists.txt
++++ b/framework/CMakeLists.txt
+@@ -43,7 +43,8 @@ usMacroCreateBundle(Framework
+   LINK_LIBRARIES ${_link_libraries}
+   SOURCES $<TARGET_OBJECTS:absl> ${_framework_srcs}
+   PUBLIC_HEADERS ${_framework_public_headers}
+-  PRIVATE_HEADERS $<TARGET_PROPERTY:absl,INCLUDE_DIRECTORIES> ${_framework_private_headers}
++  # PRIVATE_HEADERS $<TARGET_PROPERTY:absl,INCLUDE_DIRECTORIES> ${_framework_private_headers}
++  PRIVATE_HEADERS ${_framework_private_headers}
+   BINARY_RESOURCES manifest.json
+ )
+ 
