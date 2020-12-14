@@ -1,10 +1,3 @@
-include_directories("${gtest_SOURCE_DIR}/include")
-include_directories("${CMAKE_CURRENT_BINARY_DIR}/googletest-src/googletest/include")
-
-include_directories("${CMAKE_CURRENT_BINARY_DIR}/libxml2-src/include")
-include_directories("${CMAKE_CURRENT_BINARY_DIR}/libxml2-build")
-link_directories("${CMAKE_CURRENT_BINARY_DIR}/libxml2-build")
-
 link_directories("${CMAKE_CURRENT_BINARY_DIR}/cppmicroservices-build/lib")
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/cppmicroservices-src/util/include")
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/cppmicroservices-src/framework/include")

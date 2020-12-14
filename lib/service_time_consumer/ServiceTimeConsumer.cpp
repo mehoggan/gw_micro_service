@@ -1,27 +1,25 @@
+#include "gw_micro_service/service_time/ServiceTime.h"
+
 #include <cppmicroservices/BundleActivator.h>
 #include <cppmicroservices/BundleContext.h>
 #include <cppmicroservices/GetBundleContext.h>
 
-#include <ServiceTime.h>
-
 #include <iostream>
 
-using namespace cppmicroservices;
-
-class ServiceTimeConsumerActivator : public BundleActivator
+class ServiceTimeConsumerActivator : public cppmicroservices::BundleActivator
 {
-  typedef ServiceReference<ServiceTime> ServiceTimeRef;
+  typedef cppmicroservices::ServiceReference<ServiceTime> ServiceTimeRef;
 
-  void Start(BundleContext ctx)
+  void Start(cppmicroservices::BundleContext ctx)
   {
     auto ref = ctx.GetServiceReference<ServiceTime>();
 
     PrintTime(ref);
   }
 
-  void Stop(BundleContext)
+  void Stop(cppmicroservices::BundleContext ctx)
   {
-    // Nothing to do
+    (void) ctx;
   }
 
   void PrintTime(const ServiceTimeRef& ref) const
@@ -31,16 +29,14 @@ class ServiceTimeConsumerActivator : public BundleActivator
       return;
     }
 
-    // We can also get the bundle context like this
-    auto ctx = GetBundleContext();
+    auto ctx = cppmicroservices::GetBundleContext();
 
-    // Get the ServiceTime service
     auto svc_time = ctx.GetService(ref);
     if (!svc_time) {
-      std::cout << "ServiceTime not available" << std::endl;
+      std::cerr<< "ServiceTime not available" << std::endl;
     } else {
       std::cout << "Elapsed: " << svc_time->elapsed().count() << "ms"
-                << std::endl;
+        << std::endl;
     }
   }
 };

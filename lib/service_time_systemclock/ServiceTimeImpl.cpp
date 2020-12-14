@@ -1,8 +1,6 @@
-#include <ServiceTime.h>
+#include "gw_micro_service/service_time/ServiceTime.h"
 
 #include <cppmicroservices/BundleActivator.h>
-
-using namespace cppmicroservices;
 
 class ServiceTimeSystemClock : public ServiceTime
 {
@@ -10,24 +8,22 @@ class ServiceTimeSystemClock : public ServiceTime
   {
     auto now = std::chrono::system_clock::now();
 
-    // Relies on the de-facto standard of relying on
-    // POSIX time in all known implementations so far.
     return std::chrono::duration_cast<std::chrono::milliseconds>(
       now.time_since_epoch());
   }
 };
 
-class ServiceTimeActivator : public BundleActivator
+class ServiceTimeActivator : public cppmicroservices::BundleActivator
 {
-  void Start(BundleContext ctx)
+  void Start(cppmicroservices::BundleContext ctx)
   {
     auto service = std::make_shared<ServiceTimeSystemClock>();
     ctx.RegisterService<ServiceTime>(service);
   }
 
-  void Stop(BundleContext)
+  void Stop(cppmicroservices::BundleContext ctx)
   {
-    // Nothing to do
+    (void) ctx;
   }
 };
 

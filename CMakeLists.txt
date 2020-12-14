@@ -20,5 +20,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.cppmicroservices.txt.in
 
 include(GenerateExportHeader)
 
+include_directories("./include")
+
+add_subdirectory(include)
 add_subdirectory(lib)
 add_subdirectory(bin)

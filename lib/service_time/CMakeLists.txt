@@ -1,5 +1,4 @@
 add_library(ServiceTime
-  "./ServiceTime.h"
   "./ServiceTime.cpp")
 
 target_include_directories(ServiceTime PUBLIC
