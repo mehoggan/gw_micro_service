@@ -1,5 +1,4 @@
-add_library(ServiceTime
-  "./ServiceTime.cpp")
+add_library(ServiceTime "./Activator.cpp")
 
 target_include_directories(ServiceTime PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
