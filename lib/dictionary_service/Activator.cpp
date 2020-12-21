@@ -1,60 +1,29 @@
-#include "gw_micro_service/dictionary_service/IDictionaryService.h"
+#include "gw_micro_service/dictionary_service/Activator.h"
 
-#include <cppmicroservices/BundleActivator.h>
-#include <cppmicroservices/BundleContext.h>
-#include <cppmicroservices/ServiceProperties.h>
+#include "gw_micro_service/dictionary_service/DictionaryService.h"
 
+#include <iostream>
 #include <memory>
-#include <set>
-
-
-namespace
+namespace gw_micro_service
 {
-  class US_ABI_LOCAL Activator :
-    public cppmicroservices::BundleActivator
+  namespace dictionary_service
   {
-
-  private:
-    class DictionaryImpl : public IDictionaryService
+    void Activator::Start(cppmicroservices::BundleContext context)
     {
-    private:
-      std::set<std::string> dictionary_;
-
-    public:
-      DictionaryImpl()
-      {
-        dictionary_.insert("welcome");
-        dictionary_.insert("to");
-        dictionary_.insert("the");
-        dictionary_.insert("micro");
-        dictionary_.insert("services");
-        dictionary_.insert("tutorial");
-      }
-
-      bool CheckWord(const std::string& word)
-      {
-        std::string lword(word);
-        std::transform(lword.begin(), lword.end(), lword.begin(), ::tolower);
-
-        return dictionary_.find(lword) != dictionary_.end();
-      }
-    };
-
-  public:
-    void Start(cppmicroservices::BundleContext context)
-    {
-      std::shared_ptr<DictionaryImpl> dictionary_Service =
-        std::make_shared<DictionaryImpl>();
+      std::shared_ptr<DictionaryService> dictionary_service =
+        std::make_shared<DictionaryService>();
       cppmicroservices::ServiceProperties props;
       props["Language"] = std::string("English");
-      context.RegisterService<IDictionaryService>(dictionary_Service, props);
+      context.RegisterService<IDictionaryService>(dictionary_service, props);
+      std::cout << "Starting service in " << __FILE__ << std::endl;
     }
 
-    void Stop(cppmicroservices::BundleContext context)
+    void Activator::Stop(cppmicroservices::BundleContext context)
     {
       (void) context;
     }
-  };
+  }
 }
 
-CPPMICROSERVICES_EXPORT_BUNDLE_ACTIVATOR(Activator)
+CPPMICROSERVICES_EXPORT_BUNDLE_ACTIVATOR(
+  gw_micro_service::dictionary_service::Activator)

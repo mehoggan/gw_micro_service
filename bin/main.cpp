@@ -1,66 +1,100 @@
+#include "gw_micro_service/dictionary_service/IDictionaryService.h"
+
 #include <cppmicroservices/Bundle.h>
 #include <cppmicroservices/BundleContext.h>
 #include <cppmicroservices/BundleImport.h>
 #include <cppmicroservices/Framework.h>
+#include <cppmicroservices/FrameworkEvent.h>
 #include <cppmicroservices/FrameworkFactory.h>
+#include <cppmicroservices/GetBundleContext.h>
+#include <cppmicroservices/ServiceReference.h>
 
-#include <cstdlib>
+#include <algorithm>
+#include <cstdint>
+#include <iostream>
+#include <iomanip>
+#include <map>
+#include <set>
+#include <sstream>
+#include <stdexcept>
 
-using namespace cppmicroservices;
 
-int main(int argc, char* argv[])
+int main(int /*argc*/, char** /*argv*/)
 {
-  int status_code = EXIT_SUCCESS;
+  char cmd[256];
 
-  Framework fw = FrameworkFactory().NewFramework();
+  std::unordered_map<std::string, long> symbolicNameToId;
+
+  cppmicroservices::FrameworkFactory factory;
+  auto framework = factory.NewFramework();
 
   try {
-    fw.Init();
-  } catch (const std::exception& e) {
-    std::cout << e.what() << std::endl;
+    framework.Start();
+    framework.GetBundleContext().InstallBundles("/home/mehoggan/Devel/build/"
+      "github/mehoggan/gw_micro_service/lib/dictionary_service/"
+      "libDictionaryServiced.so");
+    framework.GetBundleContext().GetBundles()[0].Start();
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
   }
 
-  auto ctx = fw.GetBundleContext();
-  if (!ctx) {
-    std::cerr << "Invalid framework context" << std::endl;
-    status_code = EXIT_FAILURE;
-  } else {
-    for (int i = 1; i < argc; ++i) {
-      try {
-        ctx.InstallBundles(argv[i]);
-      } catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
-        status_code = EXIT_FAILURE;
-      }
+  namespace gw =  gw_micro_service::dictionary_service;
+  cppmicroservices::ServiceReference<gw::IDictionaryService> service_ref =
+    framework.GetBundleContext().GetServiceReference<gw::IDictionaryService>();
+
+  std::cout << "> ";
+  while (std::cin.getline(cmd, sizeof(cmd))) {
+    if (framework.GetState() != cppmicroservices::Bundle::STATE_ACTIVE) {
+      break;
     }
 
-    if (status_code != EXIT_FAILURE) {
-      try {
-        fw.Start();
-        auto bundles = ctx.GetBundles();
-        auto iter = std::find_if(bundles.begin(), bundles.end(),
-          [](Bundle& b) {
-            return b.GetSymbolicName() == "service_time_systemclock";
-          });
-        if (iter != bundles.end()) {
-          iter->Start();
-        }
+    std::string str_cmd(cmd);
+    if (str_cmd == "shutdown") {
+      break;
+    } else if (str_cmd == "h" || str_cmd == "help") {
+      std::cout << std::left << std::setw(20) << "h"
+        << " This help text\n"
+        << std::setw(20) << "status"
+        << " Print status information\n"
+        << std::setw(20) << "shutdown"
+        << " Shut down the framework\n"
+        << std::flush;
+    } else if (str_cmd == "status") {
+      std::cout << std::left;
+      std::cout << "Symbolic Name" << " | " << std::setw(9) << "State"
+        << std::endl;
+      std::cout << "-----------------------------------\n";
+      auto bundle = framework.GetBundleContext().GetBundles()[0];
 
-        for (auto& bundle : bundles) {
-          bundle.Start();
-        }
-      } catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
-        status_code = EXIT_FAILURE;
-      }
+      std::cout << std::setw(20) << bundle.GetSymbolicName() << " | ";
+      std::cout << std::setw(9) << (bundle.GetState());
+      std::cout << std::endl;
+
+      auto service = service_ref
+        .GetBundle()
+        .GetBundleContext()
+        .GetService<gw::IDictionaryService>(service_ref);
+      std::cout << std::setw(20)
+        << (service->CheckWord("Tutorial") ? "true" : "false")
+        << std::endl;
+    } else if (str_cmd == "shutdown") {
+      break;
+    } else {
+      std::cout << "Unknown command: " << str_cmd << " (type 'h' for help)"
+        << std::endl;
     }
-  } 
+    
+    std::cout << "> "; 
+  }
 
-  return status_code;
+  framework.Stop();
+  framework.WaitForStop(std::chrono::seconds(2));
+
+  return 0;
 }
 
-#if !defined(US_BUILD_SHARED_LIBS)
-CPPMICROSERVICES_IMPORT_BUNDLE(service_time_systemclock)
-CPPMICROSERVICES_IMPORT_BUNDLE(service_time_consumer)
+#ifndef US_BUILD_SHARED_LIBS
+CPPMICROSERVICES_INITIALIZE_STATIC_BUNDLE(system_bundle)
+CPPMICROSERVICES_IMPORT_BUNDLE(dictionaryservice)
 #endif
