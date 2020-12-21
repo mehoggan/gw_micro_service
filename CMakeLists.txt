@@ -12,16 +12,5 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/c++11.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/externals.cmake)
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.cppmicroservices.txt.in
-    ${CMAKE_BINARY_DIR}/cppmicroservices-download/CMakeLists.txt)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cppmicroservices.cmake)
-
-include(GenerateExportHeader)
-
-include_directories("./include")
-
-add_subdirectory(include)
-add_subdirectory(lib)
-add_subdirectory(bin)
+add_subdirectory("./services")
