@@ -1,1 +1,3 @@
-**/services
+**/cmake_install.cmake
+**/Makefile
+**/CMakeFiles/
