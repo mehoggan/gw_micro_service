@@ -1,9 +1,37 @@
+function(wget_ngrest os)
+  message(STATUS "Downloading ngrest for ${os}...")
+  execute_process(
+    COMMAND bash "${CMAKE_SOURCE_DIR}/scripts/download_ngrest.sh"
+    RESULT_VARIABLE NGREST_RESULT_VAR
+    OUTPUT_VARIABLE NGREST_OUTPUT_VAR
+    ERROR_VARIABLE NGREST_ERROR_VAR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_STRIP_TRAILING_WHITESPACE)
+
+  if (NOT NGREST_RESULT_VAR EQUAL "0")
+    message(FATAL_ERROR "Failed to download ngrest "
+      "using ngrest with the following results:\n"
+      "     RESULT_VAR=${NGREST_RESULT_VAR}\n"
+      "     OUTPUT_VAR=${NGREST_OUTPUT_VAR}\n"
+      "     ERROR_VAR=${NGREST_ERROR_VAR}")
+  else()
+    message(STATUS "Downloaded ngrest and installed it with:\n\tresult="
+      "${NGREST_RESULT_VAR}\n\toutput=${NGREST_OUTPUT_VAR}")
+  endif()
+endfunction()
+
 function(get_ngrest)
   if(UNIX AND NOT APPLE)
     if(NOT EXISTS "/usr/local/bin/ngrest")
       message(STATUS "installing ngrest...")
-      execute_process(
-        COMMAND bash "${CMAKE_SOURCE_DIR}/scripts/download_ngrest.sh")
+      wget_ngrest("Linux")
+    else()
+      message(STATUS "ngrest is already installed.")
+    endif()
+  elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    if(NOT EXISTS "/usr/local/bin/ngrest")
+      message(STATUS "installing ngrest...")
+      wget_ngrest("Mac OSx")
     else()
       message(STATUS "ngrest is already installed.")
     endif()
