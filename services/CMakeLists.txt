@@ -9,7 +9,7 @@ foreach(ServiceName IN LISTS ServiceNames)
     make_ngrest_service(
       NAME ${ServiceName}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  endif()  
+  endif()
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${ServiceName})
   add_ngrest_service_target(
     NAME ${ServiceName}
