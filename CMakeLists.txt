@@ -5,6 +5,8 @@ option(BUILD_SHARED_LIBS "Build shared libraries over static library." ON)
 option(DAGTASKS_TESTS "Build unit tests." ON)
 option(DAGTASKS_BINDINGS "Build all bindings for the native library." ON)
 
+find_program(wget "wget" REQUIRED)
+
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
