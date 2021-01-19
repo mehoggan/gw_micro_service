@@ -15,4 +15,7 @@ endif()
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/c++11.cmake)
 
+add_subdirectory("./include")
+add_subdirectory("./lib")
+
 add_subdirectory("./services")

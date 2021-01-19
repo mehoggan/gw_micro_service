@@ -1,4 +1,4 @@
-set(ServiceNames "warscroll_collector")
+set(ServiceNames "warscroll_collector_service")
 
 include("${CMAKE_SOURCE_DIR}/cmake/ngrest.cmake")
 

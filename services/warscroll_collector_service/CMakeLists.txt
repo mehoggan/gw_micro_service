@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8.4)
-project (warscroll_collector)
+project (warscroll_collector_service)
 
 include(CheckCXXCompilerFlag)
 
@@ -77,11 +77,11 @@ set(NGREST_BIN_PATH "${NGREST_HOME}/bin/")
 # services deployed from this project
 
 
-add_subdirectory(warscroll_collector)
+add_subdirectory(warscroll_collector_service)
 if (APPLE) # cmake sets .so extension for modules under mac os x
-    set_target_properties(warscroll_collector PROPERTIES SUFFIX ".dylib")
+    set_target_properties(warscroll_collector_service PROPERTIES SUFFIX ".dylib")
 endif()
 if (MINGW) # cmake sets .so extension for modules under windows
-    set_target_properties(warscroll_collector PROPERTIES SUFFIX ".dll")
+    set_target_properties(warscroll_collector_service PROPERTIES SUFFIX ".dll")
     link_directories("${NGREST_HOME}/bin")
 endif()
