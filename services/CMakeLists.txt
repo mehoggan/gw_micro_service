@@ -1,4 +1,4 @@
-set(ServiceNames "calculator")
+set(ServiceNames "warscroll_collector")
 
 include("${CMAKE_SOURCE_DIR}/cmake/ngrest.cmake")
 
@@ -15,3 +15,7 @@ foreach(ServiceName IN LISTS ServiceNames)
     NAME ${ServiceName}
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${ServiceName}")
 endforeach()
+
+clean_ngrest(
+  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  VALID_SERVICES "${ServiceNames}")
