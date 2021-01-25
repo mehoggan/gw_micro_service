@@ -85,3 +85,8 @@ if (MINGW) # cmake sets .so extension for modules under windows
     set_target_properties(warscroll_collector_service PROPERTIES SUFFIX ".dll")
     link_directories("${NGREST_HOME}/bin")
 endif()
+
+
+########INJECTED########
+target_link_libraries(warscroll_collector_service warscroll_collector)
+target_include_directories(warscroll_collector_service PUBLIC /home/mehoggan/Devel/github/mehoggan/gw_micro_service/services/../include)

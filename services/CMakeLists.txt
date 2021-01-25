@@ -14,6 +14,11 @@ foreach(ServiceName IN LISTS ServiceNames)
   add_ngrest_service_target(
     NAME ${ServiceName}
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${ServiceName}")
+  set(INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/../include")
+  inject_deps_into_ingrest(
+    NAME "${ServiceName}"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    INCLUDE_DIRS "${INCLUDES}")
 endforeach()
 
 clean_ngrest(

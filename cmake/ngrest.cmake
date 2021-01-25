@@ -7,7 +7,6 @@ function(wget_ngrest os)
     ERROR_VARIABLE NGREST_ERROR_VAR
     OUTPUT_STRIP_TRAILING_WHITESPACE
     ERROR_STRIP_TRAILING_WHITESPACE)
-
   if (NOT NGREST_RESULT_VAR EQUAL "0")
     message(FATAL_ERROR "Failed to download ngrest "
       "using ngrest with the following results:\n"
@@ -40,22 +39,18 @@ function(get_ngrest)
   endif()
 endfunction()
 
-
 function(make_ngrest_service)
   set(options)
   set(oneValueArgs NAME WORKING_DIRECTORY)
   set(multiValueArgs)
   cmake_parse_arguments(NGREST_SERVICE "${options}" "${oneValueArgs}"
     "${multiValueArgs}" ${ARGN})
-
   if(NOT NGREST_SERVICE_NAME)
     message(FATAL_ERROR "You must define NAME.")
   endif()
-
   if(NOT NGREST_SERVICE_WORKING_DIRECTORY)
     message(FATAL_ERROR "You must define WORKING_DIRECTORY.")
   endif()
-
   execute_process(
     COMMAND "ngrest" "create" "${NGREST_SERVICE_NAME}"
     WORKING_DIRECTORY "${NGREST_SERVICE_WORKING_DIRECTORY}"
@@ -64,7 +59,6 @@ function(make_ngrest_service)
     ERROR_VARIABLE NGREST_ERROR_VAR
     OUTPUT_STRIP_TRAILING_WHITESPACE
     ERROR_STRIP_TRAILING_WHITESPACE)
-
   if (NOT NGREST_RESULT_VAR EQUAL "0")
     message(FATAL_ERROR "Failed to generate service ${NGREST_SERVICE_NAME} "
       "using ngrest with the following results:\n"
@@ -74,13 +68,39 @@ function(make_ngrest_service)
   endif()
 endfunction()
 
+function(inject_deps_into_ingrest)
+  set(options)
+  set(oneValueArgs NAME WORKING_DIRECTORY INCLUDE_DIRS)
+  set(multiValueArgs)
+  cmake_parse_arguments(NGREST_SERVICE "${options}" "${oneValueArgs}"
+    "${multiValueArgs}" ${ARGN})
+  set(WorkingDirectory "${NGREST_SERVICE_WORKING_DIRECTORY}")
+  set(ServiceName "${NGREST_SERVICE_NAME}")
+  set(BuildFile "${WorkingDirectory}/${ServiceName}/CMakeLists.txt")
+  if(NOT EXISTS "${BuildFile}")
+    message(FATAL_ERROR "${BuildFile} does not exist!!!")
+  endif()
+  file(READ "${BuildFile}" TmpTxt)
+  string(FIND "${TmpTxt}" "########INJECTED########" Matches)
+  if(${Matches} EQUAL -1)
+    string(REGEX REPLACE "_service$" "" ServiceLib "${ServiceName}")
+    message(STATUS "Adding library dependency on ${ServiceName} of "
+      "${ServiceLib}...")
+    file(APPEND "${BuildFile}" "\n\n########INJECTED########\n")
+    file(APPEND "${BuildFile}" "target_link_libraries(${ServiceName} "
+      "${ServiceLib})\n")
+    set(ServiceIncludes "${NGREST_SERVICE_INCLUDE_DIRS}")
+    file(APPEND "${BuildFile}" "target_include_directories(${ServiceName} "
+      "PUBLIC ${ServiceIncludes})\n")
+  endif()
+endfunction()
+
 function(clean_ngrest)
   set(options)
   set(oneValueArgs WORKING_DIRECTORY)
   set(multiValueArgs VALID_SERVICES)
   cmake_parse_arguments(NGREST_SERVICE "${options}" "${oneValueArgs}"
     "${multiValueArgs}" ${ARGN})
-
   file(GLOB CurrentServices "${NGREST_SERVICE_WORKING_DIRECTORY}" "*")
   list(REMOVE_ITEM CurrentServices "${NGREST_SERVICE_WORKING_DIRECTORY}")
   foreach(File IN LISTS CurrentServices)
@@ -99,18 +119,14 @@ macro(add_ngrest_service_target)
   set(options)
   set(oneValueArgs NAME WORKING_DIRECTORY)
   set(multiValueArgs)
-
   cmake_parse_arguments(NGREST_SERVICE "${options}" "${oneValueArgs}"
     "${multiValueArgs}" ${ARGN})
-
   if(NOT NGREST_SERVICE_NAME)
     message(FATAL_ERROR "You must define NAME.")
   endif()
-
   if(NOT NGREST_SERVICE_WORKING_DIRECTORY)
     message(FATAL_ERROR "You must define WORKING_DIRECTORY.")
   endif()
-
   add_custom_target(${NGREST_SERVICE_NAME}_start
     "ngrest"
     WORKING_DIRECTORY "${NGREST_SERVICE_WORKING_DIRECTORY}"

@@ -4,6 +4,8 @@
 #ifndef WARSCROLL_COLLECTOR_SERVICE_H
 #define WARSCROLL_COLLECTOR_SERVICE_H
 
+#include "gw_micro_service/warscroll_collector/warscroll_collector.h"
+
 #include <ngrest/common/Service.h>
 
 //! Dummy description for the service
@@ -27,6 +29,9 @@ public:
     // *method: GET
     //
     std::string echo(const std::string& text);
+
+private:
+    gw_micro_service::warscroll_collector wc_;
 };
 
 
