@@ -1,1 +1,1 @@
-add_subdirectory("./warscroll_collector")
+add_subdirectory("./micro_service")
