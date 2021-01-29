@@ -11,6 +11,9 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.boostbeast.txt.in
   ${CMAKE_BINARY_DIR}/boostbeast-download/CMakeLists.txt)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/boostbeast.cmake)
 
+set(CMAKE_INCLUDE_PATH
+  "${CMAKE_BINARY_DIR}/boostbeast-download/boostbeast-prefix")
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.cpprestsdk.txt.in
   ${CMAKE_BINARY_DIR}/cpprestsdk-download/CMakeLists.txt)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpprestsdk.cmake)

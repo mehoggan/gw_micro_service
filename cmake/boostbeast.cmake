@@ -5,7 +5,15 @@ execute_process(COMMAND ${CMAKE_COMMAND}
 execute_process(COMMAND ${CMAKE_COMMAND} --build .
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/boostbeast-download)
 
-set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/boostbeast/include"
-  CACHE INTERNAL "Boost_INCLUDE_DIR")
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  # We have to do this because boost does not build and FindBoost behaves
+  # differently on OSX.
+  set(Boost_INCLUDE_DIR
+    "${CMAKE_BINARY_DIR}/boostbeast-download/boostbeast-prefix/src/boost"
+    CACHE INTERNAL "Boost_INCLUDE_DIR")
+else()
+  set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/boostbeast/include"
+    CACHE INTERNAL "Boost_INCLUDE_DIR")
+endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=conversion")
